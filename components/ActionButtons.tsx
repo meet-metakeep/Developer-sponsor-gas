@@ -20,7 +20,7 @@ export function ActionButtons({
         className="btn btn-secondary"
         disabled={disabled}
       >
-        🔄 Refresh Balances
+        Refresh Balances
       </button>
       <button
         onClick={onTransferUSDC}
