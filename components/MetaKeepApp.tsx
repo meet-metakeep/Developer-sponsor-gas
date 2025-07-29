@@ -26,6 +26,7 @@ export function MetaKeepApp() {
   const [userSignature, setUserSignature] = useState<any>(null);
   const [developerSignature, setDeveloperSignature] = useState<any>(null);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [hasInsufficientUSDC, setHasInsufficientUSDC] = useState(false);
 
   useEffect(() => {
     initializeApp();
@@ -41,6 +42,25 @@ export function MetaKeepApp() {
       }, 500);
     }
   }, [userAWallet, userBWallet, devWallet, isInitialized]);
+
+  // Check USDC balance when balances are updated
+  useEffect(() => {
+    if (balances.userA?.usdc) {
+      const usdcBalance = parseFloat(balances.userA.usdc.replace(" USDC", ""));
+      const transferAmount =
+        Number(process.env.NEXT_PUBLIC_TRANSFER_AMOUNT) || 0.01;
+      const insufficient = usdcBalance < transferAmount;
+      setHasInsufficientUSDC(insufficient);
+
+      if (insufficient) {
+        setStatus({
+          message:
+            "User A has insufficient USDC on devnet. Please fund this wallet with devnet USDC to see the demo in action.",
+          type: "warning",
+        });
+      }
+    }
+  }, [balances.userA?.usdc]);
 
   const initializeApp = async () => {
     try {
@@ -113,6 +133,15 @@ export function MetaKeepApp() {
         setStatus({
           message:
             "User A wallet not available. Please initialize MetaKeep wallet first.",
+          type: "error",
+        });
+        return;
+      }
+
+      if (hasInsufficientUSDC) {
+        setStatus({
+          message:
+            "User A has insufficient USDC on devnet. Please fund this wallet with devnet USDC to see the demo in action.",
           type: "error",
         });
         return;
@@ -202,8 +231,9 @@ export function MetaKeepApp() {
       <ActionButtons
         onRefreshBalances={handleRefreshBalances}
         onTransferUSDC={handleTransferUSDC}
-        disabled={isInitializing}
+        disabled={isInitializing || hasInsufficientUSDC}
         isTransferring={transferState.isTransferring}
+        hasInsufficientUSDC={hasInsufficientUSDC}
       />
 
       <StatusSection

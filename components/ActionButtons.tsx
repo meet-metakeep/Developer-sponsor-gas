@@ -3,6 +3,7 @@ interface ActionButtonsProps {
   onTransferUSDC: () => void;
   disabled?: boolean;
   isTransferring?: boolean;
+  hasInsufficientUSDC?: boolean;
 }
 
 export function ActionButtons({
@@ -10,6 +11,7 @@ export function ActionButtons({
   onTransferUSDC,
   disabled = false,
   isTransferring = false,
+  hasInsufficientUSDC = false,
 }: ActionButtonsProps) {
   return (
     <div className="action-section">
@@ -27,6 +29,8 @@ export function ActionButtons({
       >
         {isTransferring
           ? " Transferring..."
+          : hasInsufficientUSDC
+          ? " Insufficient USDC"
           : ` Transfer ${
               process.env.NEXT_PUBLIC_TRANSFER_AMOUNT || "0.01"
             } USDC (A → B)`}
