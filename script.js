@@ -131,9 +131,9 @@ async function initialize() {
         // Initialize MetaKeep SDK
         sdk = new MetaKeep({
             appId: CONFIG.METAKEEP.APP_ID,
-            user: {
-                email: CONFIG.METAKEEP.USER_EMAIL
-            }
+            // user: {
+            //     email: CONFIG.METAKEEP.USER_EMAIL
+            // }
         });
 
         // Initialize Solana connection
