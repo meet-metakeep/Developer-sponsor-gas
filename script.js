@@ -416,12 +416,12 @@ async function checkUserAUSDCBalance() {
     }
 }
 
-// Refresh developer balance using Solana CLI
+// Refresh developer balance using RPC (works in CodeSandbox)
 async function refreshDeveloperBalance(walletAddress) {
     try {
-        console.log('Getting developer balance using Solana CLI...');
+        console.log('Getting developer balance using Solana RPC...');
         
-        // Call the Solana CLI command
+        // Call the RPC-based balance endpoint
         const response = await fetch('http://localhost:3001/api/solana-balance', {
             method: 'POST',
             headers: {
@@ -440,11 +440,11 @@ async function refreshDeveloperBalance(walletAddress) {
         console.log('Developer balance response:', data);
         
         if (data.status === 'SUCCESS' && data.balance) {
-            // Use the exact balance value from CLI without truncating
+            // Use the exact balance value from RPC without truncating
             const solBalance = data.balance;
             document.getElementById('devSOL').textContent = `${solBalance} SOL`;
             console.log(`Developer SOL balance updated to: ${solBalance} SOL`);
-            console.log(`Raw balance value from CLI: "${data.balance}"`);
+            console.log(`Raw balance value from RPC: "${data.balance}"`);
         } else {
             throw new Error('Invalid balance response format');
         }

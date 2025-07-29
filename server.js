@@ -1,11 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const fetch = require('node-fetch');
-const { exec } = require('child_process');
-const { promisify } = require('util');
 require('dotenv').config();
-
-const execAsync = promisify(exec);
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -88,7 +84,7 @@ app.post('/api/metakeep-sign', async (req, res) => {
     }
 });
 
-// Proxy endpoint for Solana CLI balance check
+// RPC-based Solana balance check (works in CodeSandbox)
 app.post('/api/solana-balance', async (req, res) => {
     try {
         const { address } = req.body;
@@ -102,28 +98,41 @@ app.post('/api/solana-balance', async (req, res) => {
         
         console.log(`Getting Solana balance for address: ${address}`);
         
-        // Execute Solana CLI command
-        const command = `solana balance ${address} -u devnet`;
-        console.log(`Executing CLI command: ${command}`);
-        const { stdout, stderr } = await execAsync(command);
+        // Use Solana RPC instead of CLI
+        const rpcUrl = process.env.SOLANA_DEVNET_RPC || 'https://api.devnet.solana.com';
         
-        if (stderr) {
-            console.error('Solana CLI stderr:', stderr);
+        const response = await fetch(rpcUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                jsonrpc: '2.0',
+                id: 1,
+                method: 'getBalance',
+                params: [address]
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`RPC request failed: ${response.status}`);
         }
+
+        const data = await response.json();
         
-        // Parse the balance from stdout (format: "0.49997 SOL")
-        const balanceMatch = stdout.trim().match(/^([\d.]+)\s+SOL$/);
-        
-        if (balanceMatch) {
-            const balance = balanceMatch[1];
-            console.log(`Balance retrieved: ${balance} SOL`);
-            res.json({
-                status: 'SUCCESS',
-                balance: balance
-            });
-        } else {
-            throw new Error(`Failed to parse balance from output: ${stdout}`);
+        if (data.error) {
+            throw new Error(`RPC error: ${data.error.message}`);
         }
+
+        // Convert lamports to SOL
+        const lamports = data.result.value;
+        const balance = (lamports / 1000000000).toFixed(5); // 1 SOL = 1,000,000,000 lamports
+        
+        console.log(`Balance retrieved: ${balance} SOL (${lamports} lamports)`);
+        res.json({
+            status: 'SUCCESS',
+            balance: balance
+        });
         
     } catch (error) {
         console.error('Error getting Solana balance:', error);

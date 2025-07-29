@@ -12,8 +12,8 @@ A demonstration of MetaKeep's developer gas sponsorship feature for USDC transfe
 ## Prerequisites
 
 - Node.js (v14 or higher)
-- Solana CLI tools installed
 - MetaKeep API key
+- (Optional) Solana CLI tools for local development
 
 ## Installation
 
@@ -98,7 +98,7 @@ npm run dev
 
 - `POST /api/developer-wallet` - Get developer wallet from MetaKeep
 - `POST /api/metakeep-sign` - Sign transaction with developer wallet
-- `POST /api/solana-balance` - Get SOL balance using Solana CLI
+- `POST /api/solana-balance` - Get SOL balance using Solana RPC (CodeSandbox compatible)
 
 ## Security Features
 
@@ -123,7 +123,8 @@ npm run dev
    - Check User A has sufficient USDC balance
 
 4. **"Solana CLI not found"**
-   - Install Solana CLI tools: `sh -c "$(curl -sSfL https://release.solana.com/stable/install)"`
+   - This application now uses RPC calls instead of CLI commands
+   - No Solana CLI installation required for CodeSandbox or similar environments
 
 ### Debug Mode
 
