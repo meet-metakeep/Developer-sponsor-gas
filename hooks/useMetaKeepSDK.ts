@@ -40,7 +40,7 @@ export function useMetaKeepSDK() {
           }
         } catch (devError) {
           console.warn('Developer wallet fetch failed, using fallback:', devError)
-          // Continue without developer wallet for now
+          
         }
 
         // Try to get User A wallet, but don't fail if it requires email
