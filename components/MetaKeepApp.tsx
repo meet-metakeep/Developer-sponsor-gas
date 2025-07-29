@@ -45,20 +45,21 @@ export function MetaKeepApp() {
 
   // Check USDC balance when balances are updated
   useEffect(() => {
-    if (balances.userA?.usdc) {
-      const usdcBalance = parseFloat(balances.userA.usdc.replace(" USDC", ""));
-      const transferAmount =
-        Number(process.env.NEXT_PUBLIC_TRANSFER_AMOUNT) || 0.01;
-      const insufficient = usdcBalance < transferAmount;
-      setHasInsufficientUSDC(insufficient);
-
-      if (insufficient) {
-        setStatus({
-          message:
-            "User A has insufficient USDC on devnet. Please fund this wallet with devnet USDC to see the demo in action.",
-          type: "warning",
-        });
-      }
+    const bal = balances.userA?.usdc;
+    const transferAmount =
+      Number(process.env.NEXT_PUBLIC_TRANSFER_AMOUNT) || 0.01;
+    let insufficient = true;
+    if (bal && !isNaN(parseFloat(bal))) {
+      const usdcBalance = parseFloat(bal.replace(" USDC", ""));
+      insufficient = usdcBalance < transferAmount;
+    }
+    setHasInsufficientUSDC(insufficient);
+    if (insufficient && bal && bal !== "Loading..." && bal !== "Error") {
+      setStatus({
+        message:
+          "User A has insufficient USDC on devnet. Please fund this wallet with devnet USDC to see the demo in action.",
+        type: "warning",
+      });
     }
   }, [balances.userA?.usdc]);
 
@@ -231,7 +232,7 @@ export function MetaKeepApp() {
       <ActionButtons
         onRefreshBalances={handleRefreshBalances}
         onTransferUSDC={handleTransferUSDC}
-        disabled={isInitializing || hasInsufficientUSDC}
+        disabled={isInitializing}
         isTransferring={transferState.isTransferring}
         hasInsufficientUSDC={hasInsufficientUSDC}
       />

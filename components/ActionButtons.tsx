@@ -25,7 +25,7 @@ export function ActionButtons({
       <button
         onClick={onTransferUSDC}
         className="btn btn-primary"
-        disabled={disabled || isTransferring}
+        disabled={disabled || isTransferring || hasInsufficientUSDC}
       >
         {isTransferring
           ? " Transferring..."
