@@ -222,6 +222,25 @@ header p {
     text-decoration: underline;
 }
 
+.solscan-link {
+    color: #667eea !important;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white !important;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    display: inline-block;
+    margin-top: 5px;
+}
+
+.solscan-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    text-decoration: none !important;
+}
+
 .signed-message {
     background: white;
     border-radius: 8px;
@@ -280,8 +299,6 @@ header p {
 .usdc-warning strong {
     color: #6c5ce7;
 }
-
-
 
 .loading {
     display: inline-block;
