@@ -73,7 +73,10 @@ export function useMetaKeepSDK() {
       }
     } catch (error) {
       console.error('Error in wallet initialization:', error)
-      // Don't throw error to prevent UI from showing error message
+      // Re-throw critical errors that should stop initialization
+      if (error instanceof Error && !error.message.includes('OPERATION_CANCELLED')) {
+        throw error
+      }
     } finally {
       setIsInitializing(false)
     }

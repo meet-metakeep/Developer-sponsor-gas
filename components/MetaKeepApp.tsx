@@ -33,7 +33,7 @@ export function MetaKeepApp() {
 
   // Refresh balances when wallets are available
   useEffect(() => {
-    if (userAWallet && userBWallet && devWallet && isInitialized) {
+    if (userBWallet && devWallet && isInitialized) {
       console.log("Wallets available, refreshing balances...");
       // Small delay to ensure everything is properly initialized
       setTimeout(() => {
@@ -52,24 +52,21 @@ export function MetaKeepApp() {
       // Initialize Solana connection first
       await initializeConnection();
 
-      // Initialize wallets (this won't throw errors now)
+      // Initialize wallets
       await initializeWallets();
 
       setIsInitialized(true);
       setStatus({ message: "", type: "info" });
     } catch (error) {
       console.error("Initialization error:", error);
-      // Only show critical errors, not MetaKeep-specific ones
-      if (error instanceof Error && !error.message.includes("MetaKeep")) {
-        setStatus({
-          message: `Initialization failed: ${error.message}`,
-          type: "error",
-        });
-      } else {
-        // For MetaKeep errors, just clear the status and continue
-        setStatus({ message: "", type: "info" });
-      }
-      setIsInitialized(true); // Mark as initialized even if there were errors
+      setStatus({
+        message: `Initialization failed: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`,
+        type: "error",
+      });
+      // Don't mark as initialized if there's a critical error
+      setIsInitialized(false);
     }
   };
 
@@ -104,9 +101,18 @@ export function MetaKeepApp() {
 
   const handleTransferUSDC = async () => {
     try {
-      if (!connection || !sdk || !userAWallet || !userBWallet || !devWallet) {
+      if (!connection || !sdk || !userBWallet || !devWallet) {
         setStatus({
           message: "Missing required wallet or connection information",
+          type: "error",
+        });
+        return;
+      }
+
+      if (!userAWallet) {
+        setStatus({
+          message:
+            "User A wallet not available. Please initialize MetaKeep wallet first.",
           type: "error",
         });
         return;
