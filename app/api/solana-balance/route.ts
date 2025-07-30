@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     
     console.log(`Getting Solana balance for address: ${address}`)
     
-    // Use RPC call instead of Solana CLI
+    // Use RPC call 
     const rpcUrl = process.env.NEXT_PUBLIC_SOLANA_DEVNET_RPC || "https://api.devnet.solana.com"
     const response = await fetch(rpcUrl, {
       method: 'POST',
